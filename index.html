@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="André Souza — Frontend Developer em Recife, PE. Angular, React, TypeScript, performance e produto." />
+  <meta name="description" content="André Souza, Frontend Developer em Recife, PE. Angular, React, TypeScript, performance e produto." />
   <title>André Souza</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -122,14 +122,17 @@
     #hero {
       min-height: 100svh;
       display: grid;
-      grid-template-columns: 42% 1fr;
+      grid-template-columns: 44% 1fr;
+      grid-template-rows: 100svh;
       padding-top: 5rem;
+      position: relative;
     }
 
     /* Photo column */
     .hero-photo-col {
       position: relative;
       overflow: hidden;
+      height: 100svh;
     }
     .hero-photo-wrap {
       position: absolute;
@@ -140,9 +143,9 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: 30% center;
+      object-position: center 15%;
       filter: contrast(1.05) brightness(.95) saturate(0.9);
-      transform: scale(1.04);
+      transform: scale(1.03);
       transition: transform 8s ease;
     }
     .hero-photo-wrap img.loaded { transform: scale(1); }
@@ -164,6 +167,15 @@
       padding: 4rem 3.5rem 4rem 3rem;
       gap: 2rem;
     }
+    /* ── CURTAIN ───────────────────────────────────────── */
+    #curtain {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 500;
+      pointer-events: none;
+    }
+
     .hero-role {
       font-family: var(--ff-mono);
       font-size: .7rem;
@@ -171,7 +183,6 @@
       text-transform: uppercase;
       color: var(--copper);
       opacity: 0;
-      transform: translateY(12px);
     }
     .hero-headline {
       font-family: var(--ff-display);
@@ -179,12 +190,18 @@
       font-weight: 700;
       line-height: 1.1;
       letter-spacing: -.02em;
-      opacity: 0;
-      transform: translateY(20px);
     }
     .hero-headline em {
       font-style: normal;
       color: var(--text-2);
+    }
+    .hero-headline .line {
+      display: block;
+      overflow: hidden;
+    }
+    .hero-headline .line span {
+      display: block;
+      clip-path: inset(0 0 110% 0);
     }
     .hero-desc {
       font-size: .95rem;
@@ -192,14 +209,12 @@
       line-height: 1.7;
       max-width: 420px;
       opacity: 0;
-      transform: translateY(12px);
     }
     .hero-stack {
       display: flex;
       gap: 1.25rem;
       flex-wrap: wrap;
       opacity: 0;
-      transform: translateY(12px);
     }
     .hero-stack span {
       font-family: var(--ff-mono);
@@ -215,7 +230,6 @@
       align-items: center;
       gap: 1.5rem;
       opacity: 0;
-      transform: translateY(12px);
     }
     .btn-main {
       display: inline-flex;
@@ -454,7 +468,11 @@
       line-height: 1.2;
       letter-spacing: -.02em;
       margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .5s var(--ease), transform .5s var(--ease);
     }
+    .about-heading.in { opacity: 1; transform: none; }
     .about-text {
       font-size: .95rem;
       color: var(--text-2);
@@ -480,9 +498,12 @@
       justify-content: space-between;
       padding: .85rem 0;
       border-bottom: 1px solid var(--line);
-      transition: border-color .2s;
+      transition: border-color .2s, opacity .4s var(--ease), transform .4s var(--ease);
+      opacity: 0;
+      transform: translateX(12px);
     }
     .stack-item:hover { border-color: var(--line-hover); }
+    .stack-item.in { opacity: 1; transform: none; }
     .stack-item:last-child { border-bottom: none; }
     .stack-name {
       font-family: var(--ff-display);
@@ -505,7 +526,7 @@
     }
     .services-inner {
       display: grid;
-      grid-template-columns: 1fr 2fr;
+      grid-template-columns: 120px 1fr;
       gap: 4rem;
       align-items: start;
     }
@@ -516,13 +537,19 @@
       text-transform: uppercase;
       color: var(--text-2);
       padding-top: .25rem;
+      line-height: 1.8;
     }
     .services-cols {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 2.5rem;
     }
-    .service-group { }
+    .service-group {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .4s var(--ease), transform .4s var(--ease);
+    }
+    .service-group.in { opacity: 1; transform: none; }
     .service-group-title {
       font-family: var(--ff-display);
       font-size: .9rem;
@@ -577,12 +604,11 @@
     .cta-headline .line-inner {
       display: block;
       transform: translateY(110%);
-      transition: transform 1s var(--ease);
+      transition: transform .6s var(--ease);
     }
     .cta-headline.revealed .line-inner { transform: translateY(0); }
-    .cta-headline .line-inner:nth-child(1) { transition-delay: 0s; }
-    .cta-headline .line-inner:nth-child(2) { transition-delay: .08s; }
-    .cta-headline .line-inner:nth-child(3) { transition-delay: .16s; }
+    .cta-headline .line-wrap:nth-child(1) .line-inner { transition-delay: 0s; }
+    .cta-headline .line-wrap:nth-child(2) .line-inner { transition-delay: .07s; }
     .cta-headline .dim { color: var(--text-3); }
 
     .cta-email-wrap {
@@ -705,15 +731,16 @@
 
     /* ── REDUCED MOTION ────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
-      * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
-      .hero-role, .hero-headline, .hero-desc, .hero-stack, .hero-actions, .hero-scroll,
-      .cta-headline .line-inner { opacity: 1 !important; transform: none !important; }
+      .scroll-line,
+      .status-dot { animation: none !important; }
+      .cta-headline .line-inner { transform: translateY(0) !important; }
     }
   </style>
 </head>
 <body>
 
-  <div id="bar"  aria-hidden="true"></div>
+  <div id="bar" aria-hidden="true"></div>
+  <div id="curtain" aria-hidden="true"></div>
 
   <!-- ── NAV ──────────────────────────────────────────── -->
   <nav id="nav">
@@ -739,9 +766,10 @@
       <p class="hero-role" id="h-role">Frontend Developer</p>
 
       <h1 class="hero-headline" id="h-head">
-        Eu faço código<br/>
-        que parece design<br/>
-        <em>— e design que<br/>performa.</em>
+        <span class="line"><span>Eu faço código</span></span>
+        <span class="line"><span>que parece design</span></span>
+        <span class="line"><span><em>e design que</em></span></span>
+        <span class="line"><span><em>performa.</em></span></span>
       </h1>
 
       <p class="hero-desc" id="h-desc">
@@ -780,7 +808,7 @@
     <div class="quote-inner">
       <p class="quote-text" id="quote-text">
         "Entre código, produto e estética,<br/>
-        eu crio interfaces que parecem simples —<br/>
+        eu crio interfaces que parecem simples,<br/>
         mas são <em>pensadas para performar.</em>"
       </p>
       <p class="quote-attr">Recife, PE · Remoto / Híbrido</p>
@@ -907,7 +935,7 @@
       </p>
       <p class="about-text">
         Baseado em <a href="#">Recife, PE</a>. Disponível para trabalho
-        remoto e híbrido — projetos freelance ou posições em equipe.
+        remoto e híbrido. Projetos freelance ou posições em equipe.
       </p>
     </div>
     <div class="about-right">
@@ -929,8 +957,16 @@
           <span class="stack-detail">Avançado</span>
         </li>
         <li class="stack-item">
+          <span class="stack-name">JavaScript</span>
+          <span class="stack-detail">ES2022+ · Nativo</span>
+        </li>
+        <li class="stack-item">
           <span class="stack-name">Tailwind CSS</span>
           <span class="stack-detail">Avançado</span>
+        </li>
+        <li class="stack-item">
+          <span class="stack-name">APIs REST</span>
+          <span class="stack-detail">Integração · OpenAPI</span>
         </li>
         <li class="stack-item">
           <span class="stack-name">Performance Web</span>
@@ -939,6 +975,18 @@
         <li class="stack-item">
           <span class="stack-name">Design Systems</span>
           <span class="stack-detail">Arquitetura de UI</span>
+        </li>
+        <li class="stack-item">
+          <span class="stack-name">Testes</span>
+          <span class="stack-detail">Jest · Cypress · A/B</span>
+        </li>
+        <li class="stack-item">
+          <span class="stack-name">Git / CI</span>
+          <span class="stack-detail">GitHub Actions · GitFlow</span>
+        </li>
+        <li class="stack-item">
+          <span class="stack-name">UX / Produto</span>
+          <span class="stack-detail">Figma · Fluxo · Conversão</span>
         </li>
       </ul>
     </div>
@@ -989,7 +1037,7 @@
 
     <h2 class="cta-headline" id="cta-headline">
       <span class="line-wrap"><span class="line-inner">Vamos criar</span></span>
-      <span class="line-wrap"><span class="line-inner">algo <span class="dim">junto.</span></span></span>
+      <span class="line-wrap"><span class="line-inner">algo <span class="dim">juntos.</span></span></span>
     </h2>
 
     <div class="cta-email-wrap">
@@ -1054,26 +1102,61 @@
     }, { passive: true });
 
     /* ── HERO ENTRY ──────────────────────────────────── */
-    const img = document.getElementById('hero-img');
-    function onLoaded() {
-      img.classList.add('loaded');
-      const els = [
-        { el: document.getElementById('h-role'),    delay: 0.05 },
-        { el: document.getElementById('h-head'),    delay: 0.15 },
-        { el: document.getElementById('h-desc'),    delay: 0.30 },
-        { el: document.getElementById('h-stack'),   delay: 0.42 },
-        { el: document.getElementById('h-actions'), delay: 0.52 },
-        { el: document.getElementById('h-scroll'),  delay: 0.72 },
-      ];
-      els.forEach(({ el, delay }) => {
-        el.style.transition = `opacity .7s ${delay}s cubic-bezier(0.16,1,0.3,1),
-                               transform .7s ${delay}s cubic-bezier(0.16,1,0.3,1)`;
-        el.style.opacity   = '1';
-        el.style.transform = 'translateY(0)';
+    const curtain = document.getElementById('curtain');
+    const role    = document.getElementById('h-role');
+    const desc    = document.getElementById('h-desc');
+    const stack   = document.getElementById('h-stack');
+    const actions = document.getElementById('h-actions');
+    const hScroll = document.getElementById('h-scroll');
+    const lines   = document.querySelectorAll('#h-head .line span');
+    const E       = 'cubic-bezier(0.22, 1, 0.36, 1)';
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    document.getElementById('hero-img').classList.add('loaded');
+
+    if (reduced) {
+      curtain.remove();
+      role.style.opacity = '1';
+      lines.forEach(s => s.style.clipPath = 'none');
+      [desc, stack, actions, hScroll].forEach(el => el.style.opacity = '1');
+    } else {
+      // Curtain sai rápido
+      curtain.style.transition = 'opacity 160ms ' + E;
+      curtain.style.opacity = '0';
+      setTimeout(() => curtain.remove(), 180);
+
+      // Role — scramble imediato
+      const pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ·—/';
+      const txt  = 'Frontend Developer';
+      const tot  = Math.round(360 / 38);
+      let f = 0;
+      role.style.opacity = '1';
+      const sid = setInterval(() => {
+        const p = f / tot;
+        role.textContent = txt.split('').map((c, i) =>
+          c === ' ' ? ' ' : i < txt.length * p ? c : pool[Math.floor(Math.random() * pool.length)]
+        ).join('');
+        if (++f > tot) { clearInterval(sid); role.textContent = txt; }
+      }, 38);
+
+      // Headline — clip-path rápido, stagger mínimo
+      lines.forEach((span, i) => {
+        setTimeout(() => {
+          span.style.transition = `clip-path 260ms ${E}`;
+          span.style.clipPath = 'inset(0 0 0% 0)';
+        }, 40 + i * 40);
       });
+
+      // Suportes — entram logo após o headline
+      const fade = (el, t) => setTimeout(() => {
+        el.style.transition = `opacity 200ms ${E}`;
+        el.style.opacity = '1';
+      }, t);
+      fade(desc,    260);
+      fade(stack,   320);
+      fade(actions, 380);
+      fade(hScroll, 480);
     }
-    if (img.complete) onLoaded();
-    else img.addEventListener('load', onLoaded);
 
     /* ── PROJECT ROWS — click to expand ─────────────── */
     document.querySelectorAll('.proj-row').forEach(row => {
@@ -1101,17 +1184,42 @@
     }, { threshold: 0.4 });
     ctaObs.observe(ctaH);
 
-    /* ── QUOTE REVEAL ────────────────────────────────── */
+    /* ── SCROLL REVEALS ──────────────────────────────── */
+    // Quote
     const qt = document.getElementById('quote-text');
-    qt.style.opacity = '0';
-    qt.style.transform = 'translateY(24px)';
-    qt.style.transition = 'opacity 1s .1s cubic-bezier(0.16,1,0.3,1), transform 1s .1s cubic-bezier(0.16,1,0.3,1)';
+    qt.style.cssText += 'opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .6s var(--ease)';
     new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
-        qt.style.opacity = '1';
-        qt.style.transform = 'translateY(0)';
-      }
-    }, { threshold: 0.3 }).observe(qt);
+      if (!e.isIntersecting) return;
+      qt.style.opacity = '1'; qt.style.transform = 'none';
+    }, { threshold: 0.25 }).observe(qt);
+
+    // About heading
+    new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      document.querySelector('.about-heading').classList.add('in');
+    }, { threshold: 0.3 }).observe(document.querySelector('#about'));
+
+    // Stack items — stagger
+    const stackObs = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      document.querySelectorAll('.stack-item').forEach((el, i) => {
+        el.style.transitionDelay = `${i * 55}ms`;
+        el.classList.add('in');
+      });
+      stackObs.disconnect();
+    }, { threshold: 0.2 });
+    stackObs.observe(document.querySelector('.stack-list'));
+
+    // Services — stagger
+    const svcObs = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      document.querySelectorAll('.service-group').forEach((el, i) => {
+        el.style.transitionDelay = `${i * 80}ms`;
+        el.classList.add('in');
+      });
+      svcObs.disconnect();
+    }, { threshold: 0.2 });
+    svcObs.observe(document.querySelector('.services-cols'));
 
     /* ── COPY EMAIL ──────────────────────────────────── */
     const copyBtn = document.getElementById('copy-btn');
@@ -1126,53 +1234,13 @@
       });
     });
 
-    /* ── GSAP PARALLAX (if available) ───────────────── */
+    /* ── GSAP — só parallax da foto ─────────────────── */
     window.addEventListener('load', () => {
-      if (typeof gsap === 'undefined') return;
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
       gsap.registerPlugin(ScrollTrigger);
-
-      // Photo subtle parallax
       gsap.to('.hero-photo-wrap img', {
-        yPercent: 8,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '#hero',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true,
-        }
-      });
-
-      // About heading stagger
-      gsap.fromTo('.about-heading', {
-        opacity: 0, y: 30
-      }, {
-        opacity: 1, y: 0,
-        duration: .9,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: '#about', start: 'top 80%' }
-      });
-
-      // Stack items stagger
-      gsap.fromTo('.stack-item', {
-        opacity: 0, x: 16
-      }, {
-        opacity: 1, x: 0,
-        duration: .5,
-        stagger: .06,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: '.stack-list', start: 'top 85%' }
-      });
-
-      // Services stagger
-      gsap.fromTo('.service-group', {
-        opacity: 0, y: 20
-      }, {
-        opacity: 1, y: 0,
-        duration: .6,
-        stagger: .1,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: '.services-cols', start: 'top 85%' }
+        yPercent: 8, ease: 'none',
+        scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
       });
     });
   })();
