@@ -649,6 +649,51 @@
       border-color: var(--line-hover);
     }
 
+    /* ── PROJECT PREVIEW (hover flutuante) ─────────────── */
+    #preview {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 380px;
+      height: 240px;
+      pointer-events: none;
+      z-index: 90;
+      opacity: 0;
+      transition: opacity .35s var(--ease-out);
+      will-change: transform, opacity;
+      border: 1px solid var(--line-hover);
+      background: var(--surface);
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    #preview.show { opacity: 1; }
+    #preview img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      opacity: 0;
+      transition: opacity .25s var(--ease-out);
+    }
+    #preview img.active { opacity: 1; }
+    #preview::after {
+      content: '↗';
+      position: absolute;
+      top: .75rem;
+      right: .85rem;
+      font-size: .75rem;
+      width: 24px; height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(11,11,13,.7);
+      color: var(--copper);
+      border-radius: 50%;
+      backdrop-filter: blur(8px);
+    }
+
     /* ── ABOUT ─────────────────────────────────────────── */
     #about {
       display: grid;
@@ -1363,7 +1408,7 @@
 
     <div class="projects-list">
 
-      <div class="proj-row" data-proj="0" tabindex="0" role="button" aria-expanded="false">
+      <div class="proj-row" data-proj="0" data-preview="previews/finvo.webp" tabindex="0" role="button" aria-expanded="false">
         <div class="proj-top">
           <div class="proj-top-left">
             <span class="proj-num">01</span>
@@ -1389,7 +1434,7 @@
         </div>
       </div>
 
-      <div class="proj-row" data-proj="1" tabindex="0" role="button" aria-expanded="false">
+      <div class="proj-row" data-proj="1" data-preview="previews/chega-ai.webp" tabindex="0" role="button" aria-expanded="false">
         <div class="proj-top">
           <div class="proj-top-left">
             <span class="proj-num">02</span>
@@ -1414,7 +1459,7 @@
         </div>
       </div>
 
-      <div class="proj-row" data-proj="2" tabindex="0" role="button" aria-expanded="false">
+      <div class="proj-row" data-proj="2" data-preview="previews/urban-store.webp" tabindex="0" role="button" aria-expanded="false">
         <div class="proj-top">
           <div class="proj-top-left">
             <span class="proj-num">03</span>
@@ -1439,7 +1484,7 @@
         </div>
       </div>
 
-      <div class="proj-row" data-proj="3" tabindex="0" role="button" aria-expanded="false">
+      <div class="proj-row" data-proj="3" data-preview="previews/repify.webp" tabindex="0" role="button" aria-expanded="false">
         <div class="proj-top">
           <div class="proj-top-left">
             <span class="proj-num">04</span>
@@ -1465,7 +1510,7 @@
         </div>
       </div>
 
-      <div class="proj-row" data-proj="4" tabindex="0" role="button" aria-expanded="false">
+      <div class="proj-row" data-proj="4" data-preview="previews/codear.webp" tabindex="0" role="button" aria-expanded="false">
         <div class="proj-top">
           <div class="proj-top-left">
             <span class="proj-num">05</span>
@@ -1490,7 +1535,7 @@
         </div>
       </div>
 
-      <div class="proj-row" data-proj="5" tabindex="0" role="button" aria-expanded="false">
+      <div class="proj-row" data-proj="5" data-preview="previews/novita.webp" tabindex="0" role="button" aria-expanded="false">
         <div class="proj-top">
           <div class="proj-top-left">
             <span class="proj-num">06</span>
@@ -1515,7 +1560,7 @@
         </div>
       </div>
 
-      <div class="proj-row" data-proj="6" tabindex="0" role="button" aria-expanded="false">
+      <div class="proj-row" data-proj="6" data-preview="previews/localiza.webp" tabindex="0" role="button" aria-expanded="false">
         <div class="proj-top">
           <div class="proj-top-left">
             <span class="proj-num">07</span>
@@ -1543,6 +1588,9 @@
 
     </div>
   </section>
+
+  <!-- Preview flutuante (hover) -->
+  <div id="preview" aria-hidden="true"></div>
 
   <!-- ── ABOUT ─────────────────────────────────────────── -->
   <section id="about" aria-label="Sobre André Souza">
@@ -1820,6 +1868,58 @@
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRow(row); }
       });
     });
+
+    /* ── PROJECT HOVER PREVIEW (Awwwards style) ──────── */
+    const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (supportsHover && !reduced) {
+      const preview = document.getElementById('preview');
+      const cache = new Map(); // url → <img>
+      let activeImg = null;
+      let mouseX = 0, mouseY = 0, prevX = 0, prevY = 0;
+      let rafId = null;
+
+      // Preload all previews
+      document.querySelectorAll('.proj-row[data-preview]').forEach(row => {
+        const url = row.dataset.preview;
+        if (cache.has(url)) return;
+        const img = document.createElement('img');
+        img.src = url;
+        img.loading = 'eager';
+        img.decoding = 'async';
+        img.alt = '';
+        preview.appendChild(img);
+        cache.set(url, img);
+      });
+
+      function track() {
+        prevX += (mouseX - prevX) * 0.18;
+        prevY += (mouseY - prevY) * 0.18;
+        preview.style.transform = `translate(${prevX - 190}px, ${prevY - 120}px)`;
+        rafId = requestAnimationFrame(track);
+      }
+
+      document.querySelectorAll('.proj-row[data-preview]').forEach(row => {
+        row.addEventListener('mouseenter', () => {
+          const url = row.dataset.preview;
+          const img = cache.get(url);
+          if (activeImg && activeImg !== img) activeImg.classList.remove('active');
+          if (img) {
+            img.classList.add('active');
+            activeImg = img;
+          }
+          preview.classList.add('show');
+          if (!rafId) { prevX = mouseX; prevY = mouseY; track(); }
+        });
+        row.addEventListener('mouseleave', () => {
+          preview.classList.remove('show');
+        });
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX + 180;  // offset à direita do cursor
+        mouseY = e.clientY;
+      }, { passive: true });
+    }
 
     /* ── CTA HEADLINE REVEAL ─────────────────────────── */
     const ctaH = document.getElementById('cta-headline');
