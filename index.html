@@ -399,35 +399,16 @@
       overflow: hidden;
     }
     #quote::before {
-      content: '"';
+      content: '';
       position: absolute;
-      top: -2rem;
-      left: 2rem;
-      font-family: var(--ff-display);
-      font-size: clamp(14rem, 28vw, 28rem);
-      font-weight: 800;
-      line-height: 1;
-      color: var(--copper);
-      opacity: 0.08;
-      pointer-events: none;
-      user-select: none;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, transparent, var(--copper));
+      opacity: .5;
     }
-    #quote::after {
-      content: '"';
-      position: absolute;
-      bottom: -8rem;
-      right: 2rem;
-      font-family: var(--ff-display);
-      font-size: clamp(14rem, 28vw, 28rem);
-      font-weight: 800;
-      line-height: 1;
-      color: var(--copper);
-      opacity: 0.08;
-      pointer-events: none;
-      user-select: none;
-    }
-    #quote > * { position: relative; z-index: 1; }
-    .quote-inner { position: relative; z-index: 1; }
     .quote-inner {
       max-width: 860px;
       text-align: center;
@@ -1026,81 +1007,234 @@
       color: var(--text-3);
     }
 
-    /* ── RESPONSIVE ────────────────────────────────────── */
+    /* ──────────────────────────────────────────────────── */
+    /* ── RESPONSIVE — Mobile-first premium ─────────────── */
+    /* ──────────────────────────────────────────────────── */
+
+    /* TABLET / SMALLER LAPTOPS — 1024px e abaixo */
     @media (max-width: 1024px) {
-      .hero-content { padding: 0 2.5rem 4.5rem; }
+      .hero-content { padding: 0 2.5rem 4.5rem; width: 70%; margin-left: 30%; }
       #about { grid-template-columns: 1fr; }
       .about-left { border-right: none; border-bottom: 1px solid var(--line); }
       .services-inner { grid-template-columns: 1fr; gap: 2rem; }
-      .services-cols { grid-template-columns: 1fr 1fr; }
+      .services-cols { grid-template-columns: 1fr 1fr; gap: 3rem; }
+      #proof { grid-template-columns: 1fr; padding: 5rem 2rem; }
+      .proof-item { padding: 2.5rem 0; border-right: none; border-bottom: 1px solid var(--line); }
+      .proof-item:last-child { border-bottom: none; }
     }
 
+    /* MOBILE — 768px e abaixo */
     @media (max-width: 768px) {
-      nav { padding: 1.1rem 1.25rem; }
+      /* Base typography refinement */
+      html { font-size: 15px; }
+
+      /* NAV minimalista */
+      nav {
+        padding: 1rem 1.25rem;
+        background: rgba(11,11,13,0.6);
+        backdrop-filter: blur(20px) saturate(1.4);
+        -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      }
       .nav-links, .nav-status, .nav-email { display: none; }
+      .nav-name { font-size: .82rem; }
 
-      .sec-marker { margin-bottom: 2rem; font-size: .6rem; letter-spacing: .18em; }
-      .sec-marker::before { width: 20px; }
-      #quote .sec-marker, #services .sec-marker { margin-bottom: 2.5rem; }
+      /* SECTION MARKERS — uniformes em mobile */
+      .sec-marker {
+        margin-bottom: 1.75rem;
+        font-size: .58rem;
+        letter-spacing: .2em;
+        gap: .65rem;
+      }
+      .sec-marker::before { width: 18px; }
+      #quote .sec-marker { margin-bottom: 2rem; }
+      #services .sec-marker { margin-bottom: 2.25rem; }
 
-      #hero { min-height: 65svh; padding-top: 0; justify-content: flex-end; }
-      .hero-bg img { object-position: center 10%; filter: contrast(1.06) brightness(.6) saturate(0.8); }
+      /* HERO — full bleed cinemático em mobile */
+      #hero {
+        min-height: 88svh;
+        padding-top: 0;
+        justify-content: flex-end;
+      }
+      .hero-bg img {
+        object-position: center 18%;
+        filter: contrast(1.08) brightness(.52) saturate(0.78);
+      }
       .hero-bg::after {
         background:
           linear-gradient(to top,
             rgba(11,11,13,1)   0%,
-            rgba(11,11,13,.85) 35%,
-            rgba(11,11,13,.45) 70%,
-            rgba(11,11,13,.2)  100%);
+            rgba(11,11,13,.92) 25%,
+            rgba(11,11,13,.55) 55%,
+            rgba(11,11,13,.25) 85%,
+            rgba(11,11,13,.15) 100%);
       }
-      .hero-content { padding: 0 1.5rem 3rem; gap: 1.1rem; width: 100%; margin-left: 0; }
+      .hero-content {
+        padding: 0 1.5rem 3.5rem;
+        gap: 1.25rem;
+        width: 100%;
+        margin-left: 0;
+      }
       .hero-scroll { display: none; }
+      .hero-role { font-size: .62rem; letter-spacing: .22em; }
+      .hero-headline {
+        font-size: clamp(2.25rem, 9vw, 3.2rem);
+        line-height: 1.05;
+        letter-spacing: -.025em;
+      }
+      .hero-desc { font-size: .95rem; line-height: 1.65; max-width: 100%; }
+      .hero-stack { gap: 1rem; }
+      .hero-stack span { font-size: .62rem; }
+      .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: .85rem;
+        margin-top: .5rem;
+      }
+      .btn-main {
+        width: 100%;
+        justify-content: center;
+        padding: 1rem 1.5rem;
+        font-size: .82rem;
+      }
+      .btn-ghost {
+        text-align: center;
+        padding: .6rem 0;
+        font-size: .68rem;
+      }
 
-      .hero-headline { font-size: clamp(2rem, 8vw, 2.8rem); }
+      /* QUOTE — drama centralizado */
+      #quote { padding: 5rem 1.5rem 4.5rem; }
+      .quote-text {
+        font-size: clamp(1.35rem, 6vw, 2rem);
+        line-height: 1.4;
+        letter-spacing: -.005em;
+      }
+      .quote-attr { font-size: .58rem; letter-spacing: .2em; }
 
-      #quote { padding: 3.5rem 1.25rem; }
-      .quote-text { font-size: clamp(1.3rem, 5.5vw, 2rem); }
+      /* PROOF — vertical timeline-style */
+      #proof { padding: 4rem 1.5rem; }
+      .proof-item { padding: 2rem 0; gap: .75rem; }
+      .proof-label { font-size: .6rem; letter-spacing: .22em; }
+      .proof-num { font-size: clamp(2.2rem, 9vw, 2.8rem); letter-spacing: -.025em; }
+      .proof-desc { font-size: .88rem; line-height: 1.6; max-width: 100%; }
 
-      #projects { padding: 3.5rem 1.25rem; }
-      .proj-top { padding: 1.4rem 0; gap: 1rem; }
-      .proj-row:hover .proj-top { padding-left: 0; }
+      /* PROJECTS — limpos, sem padding shift no hover */
+      #projects { padding: 4rem 1.5rem; }
+      .section-header { margin-bottom: 2rem; }
+      .section-label, .section-count { font-size: .58rem; letter-spacing: .22em; }
+      .proj-top {
+        padding: 1.5rem 0;
+        gap: 1rem;
+        grid-template-columns: 1fr auto;
+      }
+      .proj-row:hover .proj-top,
       .proj-row.open .proj-top { padding-left: 0; }
-      .proj-top-left { gap: .8rem; }
+      .proj-row:hover::before,
+      .proj-row.open::before { width: 2px; }
+      .proj-top-left { gap: .85rem; flex-wrap: wrap; }
+      .proj-num { font-size: .58rem; letter-spacing: .14em; }
+      .proj-name { font-size: clamp(1.35rem, 5.5vw, 1.7rem); }
+      .proj-cat { font-size: .6rem; letter-spacing: .16em; }
       .proj-year { display: none; }
-      .proj-num { font-size: .58rem; }
-      .proj-body-inner { grid-template-columns: 1fr; gap: 1rem; }
+      .proj-arrow { width: 36px; height: 36px; font-size: .85rem; }
+      .proj-body-inner { grid-template-columns: 1fr; gap: 1rem; padding-bottom: 1.5rem; }
+      .proj-desc { font-size: .88rem; line-height: 1.65; }
+      .proj-tag { font-size: .55rem; padding: .3rem .65rem; }
 
-      .about-left, .about-right { padding: 2.5rem 1.25rem; }
+      /* ABOUT — respiro generoso */
+      .about-left, .about-right { padding: 3.5rem 1.5rem; }
+      .about-heading {
+        font-size: clamp(2rem, 8vw, 2.6rem);
+        line-height: 1.1;
+        margin-bottom: 2rem;
+        max-width: 14ch;
+      }
+      .about-text { font-size: .95rem; line-height: 1.75; max-width: 100%; }
+      .stack-item { padding: .85rem .15rem; }
+      .stack-item:hover { padding-left: .5rem; }
+      .stack-name { font-size: 1rem; }
+      .stack-detail { font-size: .58rem; letter-spacing: .14em; }
 
-      #services { padding: 3.5rem 1.25rem; }
-      .services-cols { grid-template-columns: 1fr; }
+      /* SERVICES — coluna única organizada */
+      #services { padding: 4rem 1.5rem; }
+      .services-inner { gap: 2.5rem; }
+      .services-left-label { font-size: .6rem; line-height: 1.6; }
+      .services-cols { grid-template-columns: 1fr; gap: 2rem; }
+      .service-group-title { font-size: .95rem; margin-bottom: 1.25rem; }
+      .service-items li { font-size: .92rem; padding: .15rem 0; }
 
-      #cta { padding: 4rem 1.25rem 3.5rem; }
+      /* CTA — drama vertical compacto */
+      #cta { padding: 5rem 1.5rem 4rem; }
+      .cta-eyebrow { font-size: .6rem; letter-spacing: .22em; margin-bottom: 2rem; }
       .cta-headline {
-        font-size: clamp(2.6rem, 11vw, 4.5rem);
+        font-size: clamp(2.8rem, 13vw, 4.5rem);
+        line-height: 0.95;
+        letter-spacing: -.035em;
+        margin-bottom: 2.5rem;
+      }
+      .cta-email-wrap {
+        flex-wrap: wrap;
+        gap: 1rem;
         margin-bottom: 2rem;
       }
-      .cta-email-wrap { flex-wrap: wrap; gap: .75rem; }
-      .cta-links { flex-wrap: wrap; gap: 1rem; }
+      .cta-email { font-size: clamp(1.1rem, 5vw, 1.4rem); }
+      .copy-btn { padding: .5rem 1rem; font-size: .58rem; }
+      .cta-whatsapp-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 1rem 1.5rem;
+        font-size: .72rem;
+        margin-bottom: 1.5rem;
+      }
+      .cta-links { gap: 1.25rem; }
+      .cta-link { font-size: .64rem; padding: .35rem 0; }
 
-      .hero-actions { flex-direction: column; align-items: flex-start; gap: .85rem; }
-      .btn-main { width: 100%; justify-content: center; }
-
-      #proof { grid-template-columns: 1fr; padding: 4rem 1.25rem; }
-      .proof-item { padding: 2.5rem 0; border-right: none; border-bottom: 1px solid var(--line); }
-      .proof-item:last-child { border-bottom: none; }
-
-      footer { grid-template-columns: 1fr; gap: 1.5rem; padding: 2.5rem 1.25rem; text-align: center; }
-      .footer-left, .footer-right { text-align: center; justify-content: center; }
-      .footer-bottom { flex-direction: column; gap: .5rem; }
+      /* FOOTER — centralizado e respirado */
+      footer {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+        padding: 3rem 1.5rem 2rem;
+        text-align: center;
+      }
+      .footer-left, .footer-right {
+        text-align: center;
+        justify-content: center;
+        font-size: .58rem;
+      }
+      .footer-bottom { flex-direction: column; gap: .65rem; padding-top: 1.5rem; font-size: .55rem; }
       .footer-center { font-size: 1rem; }
+      .footer-social a { width: 42px; height: 42px; }
     }
 
+    /* SMALL MOBILE — 430px e abaixo (iPhone SE / pequenos) */
     @media (max-width: 430px) {
-      .hero-headline { font-size: clamp(1.8rem, 9vw, 2.4rem); }
-      .cta-headline { font-size: clamp(2.2rem, 12vw, 3.5rem); }
+      nav { padding: .9rem 1.15rem; }
+      .nav-name { font-size: .78rem; }
+
+      .sec-marker { margin-bottom: 1.5rem; font-size: .55rem; }
+
+      #hero { min-height: 86svh; }
+      .hero-content { padding: 0 1.15rem 3rem; gap: 1rem; }
+      .hero-headline { font-size: clamp(1.9rem, 10vw, 2.5rem); }
+      .hero-desc { font-size: .9rem; }
+      .hero-stack span { font-size: .58rem; }
+
+      #quote { padding: 4rem 1.15rem; }
+      #proof { padding: 3rem 1.15rem; }
+      #projects, #about .about-left, #about .about-right, #services { padding-left: 1.15rem; padding-right: 1.15rem; }
+      #services { padding: 3.5rem 1.15rem; }
+      #cta { padding: 4rem 1.15rem 3rem; }
+      .about-left, .about-right { padding-top: 3rem; padding-bottom: 3rem; }
+
+      .proj-top-left { flex-direction: column; align-items: flex-start; gap: .35rem; }
+      .proj-num { font-size: .55rem; }
+      .proj-cat { font-size: .58rem; }
+
+      .cta-headline { font-size: clamp(2.4rem, 14vw, 3.6rem); }
       .services-left-label { display: none; }
-      .services-inner { grid-template-columns: 1fr; gap: 0; }
+      .services-inner { gap: 0; }
+
+      footer { padding: 2.5rem 1.15rem 1.75rem; }
     }
 
     /* ── REDUCED MOTION ────────────────────────────────── */
