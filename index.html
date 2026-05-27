@@ -8,10 +8,9 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <link rel="preload" as="image" href="hero.webp" type="image/webp" fetchpriority="high" />
 
   <style>
     /* ── TOKENS ────────────────────────────────────────── */
@@ -60,6 +59,12 @@
       background-image: var(--grain-url);
       opacity: 0.06;
       mix-blend-mode: overlay;
+      will-change: auto;
+    }
+    /* Otimização: pular pintura de seções fora da viewport */
+    #quote, #proof, #projects, #about, #services, #cta {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 600px;
     }
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
@@ -196,6 +201,7 @@
       filter: contrast(1.06) brightness(.82) saturate(0.85);
       transform: scale(1.04);
       transition: transform 8s ease;
+      will-change: transform;
     }
     .hero-bg img.loaded { transform: scale(1); }
     .hero-bg::after {
@@ -383,14 +389,45 @@
 
     /* ── QUOTE ─────────────────────────────────────────── */
     #quote {
-      padding: 7rem 2.5rem;
+      padding: 8rem 2.5rem 7rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
       position: relative;
+      overflow: hidden;
     }
+    #quote::before {
+      content: '"';
+      position: absolute;
+      top: -2rem;
+      left: 2rem;
+      font-family: var(--ff-display);
+      font-size: clamp(14rem, 28vw, 28rem);
+      font-weight: 800;
+      line-height: 1;
+      color: var(--copper);
+      opacity: 0.08;
+      pointer-events: none;
+      user-select: none;
+    }
+    #quote::after {
+      content: '"';
+      position: absolute;
+      bottom: -8rem;
+      right: 2rem;
+      font-family: var(--ff-display);
+      font-size: clamp(14rem, 28vw, 28rem);
+      font-weight: 800;
+      line-height: 1;
+      color: var(--copper);
+      opacity: 0.08;
+      pointer-events: none;
+      user-select: none;
+    }
+    #quote > * { position: relative; z-index: 1; }
+    .quote-inner { position: relative; z-index: 1; }
     .quote-inner {
       max-width: 860px;
       text-align: center;
@@ -423,6 +460,53 @@
       transition: opacity .4s var(--ease) .3s;
     }
     .quote-attr.in { opacity: 1; }
+
+    /* ── PROOF (editorial markers) ──────────────────────── */
+    #proof {
+      padding: 6rem 2.5rem;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .proof-item {
+      padding: 2rem 2.5rem;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .7s var(--ease-out), transform .7s var(--ease-out);
+    }
+    .proof-item.in { opacity: 1; transform: none; }
+    .proof-item:last-child { border-right: none; }
+    .proof-num {
+      font-family: var(--ff-display);
+      font-size: clamp(2.8rem, 5vw, 4rem);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -.03em;
+      color: var(--text-1);
+    }
+    .proof-num em {
+      font-style: normal;
+      color: var(--copper);
+    }
+    .proof-label {
+      font-family: var(--ff-mono);
+      font-size: .68rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--copper);
+    }
+    .proof-desc {
+      font-size: .92rem;
+      color: var(--text-1);
+      opacity: .65;
+      line-height: 1.6;
+      max-width: 280px;
+    }
 
     /* ── PROJECTS ──────────────────────────────────────── */
     #projects {
@@ -874,10 +958,11 @@
 
     /* ── FOOTER ────────────────────────────────────────── */
     footer {
+      padding: 3rem 2.5rem 2rem;
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      padding: 2rem 2.5rem;
+      gap: 2rem;
     }
     .footer-left, .footer-right {
       font-family: var(--ff-mono);
@@ -886,7 +971,32 @@
       text-transform: uppercase;
       color: var(--text-3);
     }
-    .footer-right { text-align: right; }
+    .footer-right {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 1rem;
+    }
+    .footer-social {
+      display: flex;
+      gap: .5rem;
+    }
+    .footer-social a {
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      color: var(--text-2);
+      transition: color .25s, border-color .25s, transform .25s var(--ease-out);
+      border-radius: 2px;
+    }
+    .footer-social a:hover {
+      color: var(--copper);
+      border-color: var(--copper);
+      transform: translateY(-2px);
+    }
     .footer-center {
       font-family: var(--ff-display);
       font-size: .85rem;
@@ -897,6 +1007,24 @@
       opacity: .9;
     }
     .footer-center span { color: var(--copper); }
+    .footer-line {
+      grid-column: 1 / -1;
+      height: 1px;
+      background: var(--line);
+      margin-top: 2rem;
+    }
+    .footer-bottom {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.5rem;
+      font-family: var(--ff-mono);
+      font-size: .6rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
 
     /* ── RESPONSIVE ────────────────────────────────────── */
     @media (max-width: 1024px) {
@@ -958,8 +1086,14 @@
       .hero-actions { flex-direction: column; align-items: flex-start; gap: .85rem; }
       .btn-main { width: 100%; justify-content: center; }
 
-      footer { grid-template-columns: 1fr 1fr; gap: .5rem; padding: 1.25rem; }
-      .footer-center { display: none; }
+      #proof { grid-template-columns: 1fr; padding: 4rem 1.25rem; }
+      .proof-item { padding: 2.5rem 0; border-right: none; border-bottom: 1px solid var(--line); }
+      .proof-item:last-child { border-bottom: none; }
+
+      footer { grid-template-columns: 1fr; gap: 1.5rem; padding: 2.5rem 1.25rem; text-align: center; }
+      .footer-left, .footer-right { text-align: center; justify-content: center; }
+      .footer-bottom { flex-direction: column; gap: .5rem; }
+      .footer-center { font-size: 1rem; }
     }
 
     @media (max-width: 430px) {
@@ -1004,7 +1138,10 @@
   <section id="hero" aria-label="Apresentação">
 
     <div class="hero-bg" aria-hidden="true">
-      <img id="hero-img" src="fotoprofissional.png" alt="" role="presentation" width="1672" height="941" />
+      <picture>
+        <source srcset="hero.webp" type="image/webp" />
+        <img id="hero-img" src="hero.jpg" alt="" role="presentation" width="1672" height="941" fetchpriority="high" decoding="async" />
+      </picture>
     </div>
 
     <div class="hero-content">
@@ -1055,11 +1192,30 @@
     <span class="sec-marker">01 <em>/ Manifesto</em></span>
     <div class="quote-inner">
       <p class="quote-text" id="quote-text">
-        "Entre código, produto e estética,<br/>
+        Entre código, produto e estética,<br/>
         eu crio interfaces que parecem simples,<br/>
-        mas são <em>pensadas para performar.</em>"
+        mas são <em>pensadas para performar.</em>
       </p>
       <p class="quote-attr">Recife, PE · Remoto / Híbrido</p>
+    </div>
+  </section>
+
+  <!-- ── PROOF ─────────────────────────────────────────── -->
+  <section id="proof" aria-label="Princípios de trabalho">
+    <div class="proof-item">
+      <span class="proof-label">Experiência</span>
+      <h3 class="proof-num">+10 <em>anos</em></h3>
+      <p class="proof-desc">Construindo produtos digitais que geram resultado de verdade. SaaS, e-commerce, dashboards e marcas.</p>
+    </div>
+    <div class="proof-item">
+      <span class="proof-label">Stack</span>
+      <h3 class="proof-num">Angular <em>+</em> React</h3>
+      <p class="proof-desc">Experiência profunda nos dois principais ecossistemas frontend, com TypeScript, RxJS e Next.js.</p>
+    </div>
+    <div class="proof-item">
+      <span class="proof-label">Foco</span>
+      <h3 class="proof-num">Performance<em>.</em></h3>
+      <p class="proof-desc">Cada interação otimizada, cada milissegundo medido. Core Web Vitals, A/B testing e arquitetura escalável.</p>
     </div>
   </section>
 
@@ -1331,25 +1487,49 @@
 
   <!-- ── FOOTER ────────────────────────────────────────── -->
   <footer>
-    <span class="footer-left">© 2026</span>
+    <span class="footer-left">Recife, PE · Frontend Developer</span>
     <span class="footer-center">André<span>.</span>Souza</span>
-    <span class="footer-right">Recife, PE · Frontend Developer</span>
+    <div class="footer-right">
+      <div class="footer-social" aria-label="Redes sociais">
+        <a href="https://www.linkedin.com/in/andresouzza/" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+        </a>
+        <a href="https://github.com/andredff" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+        </a>
+        <a href="https://wa.me/5511942407562?text=Ol%C3%A1%20Andr%C3%A9%2C%20vim%20pelo%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener" aria-label="WhatsApp">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 — 2026</span>
+      <span>Construído com cuidado em Recife</span>
+    </div>
   </footer>
 
   <script>
   (function () {
 
-    /* ── PROGRESS BAR ────────────────────────────────── */
+    /* ── SCROLL HANDLER único (rAF, sem thrashing) ───── */
     const bar = document.getElementById('bar');
-    window.addEventListener('scroll', () => {
-      const pct = scrollY / (document.body.scrollHeight - innerHeight);
-      bar.style.transform = `scaleX(${pct})`;
-    }, { passive: true });
-
-    /* ── NAV BG ──────────────────────────────────────── */
     const nav = document.getElementById('nav');
+    let scrollTick = false;
+    function onScroll() {
+      const y = scrollY;
+      const max = document.body.scrollHeight - innerHeight;
+      bar.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+      nav.classList.toggle('bg', y > 40);
+      scrollTick = false;
+    }
     window.addEventListener('scroll', () => {
-      nav.classList.toggle('bg', scrollY > 40);
+      if (!scrollTick) { requestAnimationFrame(onScroll); scrollTick = true; }
     }, { passive: true });
 
     /* ── HERO ENTRY ──────────────────────────────────── */
@@ -1479,6 +1659,17 @@
     }, { threshold: 0.2 });
     svcObs.observe(document.querySelector('.services-cols'));
 
+    // Proof items — stagger
+    const proofObs = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      document.querySelectorAll('.proof-item').forEach((el, i) => {
+        el.style.transitionDelay = `${i * 120}ms`;
+        el.classList.add('in');
+      });
+      proofObs.disconnect();
+    }, { threshold: 0.2 });
+    proofObs.observe(document.querySelector('#proof'));
+
     /* ── COPY EMAIL ──────────────────────────────────── */
     const copyBtn = document.getElementById('copy-btn');
     copyBtn.addEventListener('click', () => {
@@ -1492,15 +1683,22 @@
       });
     });
 
-    /* ── GSAP — só parallax da foto ─────────────────── */
-    window.addEventListener('load', () => {
-      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-      gsap.registerPlugin(ScrollTrigger);
-      gsap.to('.hero-bg img', {
-        yPercent: 8, ease: 'none',
-        scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
-      });
-    });
+    /* ── Hero parallax (nativo, sem GSAP) ────────────── */
+    if (!reduced) {
+      const heroImg = document.querySelector('.hero-bg img');
+      const hero    = document.getElementById('hero');
+      let ticking   = false;
+      function updateParallax() {
+        const rect = hero.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > innerHeight) { ticking = false; return; }
+        const progress = Math.max(0, Math.min(1, -rect.top / rect.height));
+        heroImg.style.transform = `scale(1) translateY(${progress * 8}%)`;
+        ticking = false;
+      }
+      window.addEventListener('scroll', () => {
+        if (!ticking) { requestAnimationFrame(updateParallax); ticking = true; }
+      }, { passive: true });
+    }
   })();
   </script>
 </body>
