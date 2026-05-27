@@ -120,52 +120,57 @@
 
     /* ── HERO ──────────────────────────────────────────── */
     #hero {
-      min-height: 100svh;
-      display: grid;
-      grid-template-columns: 44% 1fr;
-      grid-template-rows: 100svh;
-      padding-top: 5rem;
       position: relative;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding-top: 10vh;
     }
 
-    /* Photo column */
-    .hero-photo-col {
-      position: relative;
-      overflow: hidden;
-      height: 100svh;
-    }
-    .hero-photo-wrap {
+    /* Full-bleed background */
+    .hero-bg {
       position: absolute;
       inset: 0;
       overflow: hidden;
     }
-    .hero-photo-wrap img {
+    .hero-bg img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 15%;
-      filter: contrast(1.05) brightness(.95) saturate(0.9);
-      transform: scale(1.03);
+      object-position: center 20%;
+      filter: contrast(1.06) brightness(.82) saturate(0.88);
+      transform: scale(1.04);
       transition: transform 8s ease;
     }
-    .hero-photo-wrap img.loaded { transform: scale(1); }
-    .hero-photo-wrap::after {
+    .hero-bg img.loaded { transform: scale(1); }
+    .hero-bg::after {
       content: '';
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(to right, transparent 60%, var(--bg) 100%),
-        linear-gradient(to bottom, rgba(11,11,13,.3) 0%, transparent 20%, transparent 75%, rgba(11,11,13,.7) 100%);
+        linear-gradient(to top,
+          rgba(11,11,13,1)   0%,
+          rgba(11,11,13,.75) 30%,
+          rgba(11,11,13,.25) 60%,
+          transparent        100%),
+        linear-gradient(to left,
+          rgba(11,11,13,.65) 0%,
+          rgba(11,11,13,.3)  40%,
+          transparent        70%);
       pointer-events: none;
     }
 
-    /* Content column */
+    /* Content */
     .hero-content {
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      padding: 4rem 3.5rem 4rem 3rem;
-      gap: 2rem;
+      gap: 1.75rem;
+      padding: 2rem 4rem 0 0;
+      width: 52%;
+      margin-left: 50%;
     }
     /* ── CURTAIN ───────────────────────────────────────── */
     #curtain {
@@ -260,7 +265,8 @@
     .hero-scroll {
       position: absolute;
       bottom: 2.5rem;
-      left: 3rem;
+      right: 4rem;
+      z-index: 1;
       display: flex;
       align-items: center;
       gap: .75rem;
@@ -707,27 +713,7 @@
 
     /* ── RESPONSIVE ────────────────────────────────────── */
     @media (max-width: 1024px) {
-      #hero {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
-        min-height: auto;
-      }
-      .hero-photo-col {
-        height: 62vw;
-        min-height: 220px;
-        max-height: 420px;
-        position: relative;
-      }
-      .hero-photo-wrap::after {
-        background:
-          linear-gradient(to bottom, rgba(11,11,13,.1) 0%, transparent 30%, transparent 65%, var(--bg) 100%);
-      }
-      .hero-content {
-        padding: 2.5rem 1.5rem 3rem;
-        justify-content: flex-start;
-        gap: 1.5rem;
-      }
-      .hero-scroll { display: none; }
+      .hero-content { padding: 0 2.5rem 4.5rem; }
       #about { grid-template-columns: 1fr; }
       .about-left { border-right: none; border-bottom: 1px solid var(--line); }
       .services-inner { grid-template-columns: 1fr; gap: 2rem; }
@@ -738,7 +724,10 @@
       nav { padding: 1.1rem 1.25rem; }
       .nav-status, .nav-email { display: none; }
 
-      #hero { padding-top: 4rem; }
+      #hero { min-height: 65svh; padding-top: 0; justify-content: flex-end; }
+      .hero-bg img { object-position: center 10%; }
+      .hero-content { padding: 0 1.5rem 3rem; gap: 1.1rem; width: 100%; margin-left: 0; }
+      .hero-scroll { display: none; }
 
       .hero-headline { font-size: clamp(2rem, 8vw, 2.8rem); }
 
@@ -772,7 +761,6 @@
     }
 
     @media (max-width: 430px) {
-      .hero-photo-col { height: 72vw; }
       .hero-headline { font-size: clamp(1.8rem, 9vw, 2.4rem); }
       .cta-headline { font-size: clamp(2.2rem, 12vw, 3.5rem); }
       .services-left-label { display: none; }
@@ -806,10 +794,9 @@
 
   <!-- ── HERO ─────────────────────────────────────────── -->
   <section id="hero" aria-label="Apresentação">
-    <div class="hero-photo-col" aria-hidden="true">
-      <div class="hero-photo-wrap">
-        <img id="hero-img" src="fotoprofissional.png" alt="" role="presentation" width="1672" height="941" />
-      </div>
+
+    <div class="hero-bg" aria-hidden="true">
+      <img id="hero-img" src="fotoprofissional.png" alt="" role="presentation" width="1672" height="941" />
     </div>
 
     <div class="hero-content">
@@ -851,6 +838,7 @@
       <span class="scroll-line"></span>
       Scroll
     </div>
+
   </section>
 
   <!-- ── QUOTE ─────────────────────────────────────────── -->
@@ -1288,7 +1276,7 @@
     window.addEventListener('load', () => {
       if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
       gsap.registerPlugin(ScrollTrigger);
-      gsap.to('.hero-photo-wrap img', {
+      gsap.to('.hero-bg img', {
         yPercent: 8, ease: 'none',
         scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
       });
