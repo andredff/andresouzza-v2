@@ -49,7 +49,7 @@
       overflow-x: hidden;
       position: relative;
     }
-    /* Grain texture overlay — eleva a percepção tátil */
+    /* Grain texture overlay — leve, sem blend-mode (mais barato no compositor) */
     body::before {
       content: '';
       position: fixed;
@@ -57,14 +57,7 @@
       pointer-events: none;
       z-index: 999;
       background-image: var(--grain-url);
-      opacity: 0.06;
-      mix-blend-mode: overlay;
-      will-change: auto;
-    }
-    /* Otimização: pular pintura de seções fora da viewport */
-    #quote, #proof, #projects, #about, #services, #cta {
-      content-visibility: auto;
-      contain-intrinsic-size: auto 600px;
+      opacity: 0.04;
     }
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
@@ -110,15 +103,14 @@
       align-items: center;
       justify-content: space-between;
       padding: 1.5rem 2.5rem;
-      background: rgba(255,255,255,0.04);
-      backdrop-filter: blur(24px) saturate(1.4);
-      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      background: rgba(11,11,13,0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
-      transition: background .4s, border-color .4s;
+      transition: background .4s;
     }
     nav.bg {
-      background: rgba(11,11,13,.75);
-      border-color: rgba(255,255,255,0.04);
+      background: rgba(11,11,13,.85);
     }
     .nav-name {
       font-family: var(--ff-display);
@@ -201,7 +193,6 @@
       filter: contrast(1.06) brightness(.82) saturate(0.85);
       transform: scale(1.04);
       transition: transform 8s ease;
-      will-change: transform;
     }
     .hero-bg img.loaded { transform: scale(1); }
     .hero-bg::after {
@@ -659,14 +650,19 @@
       pointer-events: none;
       z-index: 90;
       opacity: 0;
-      transition: opacity .35s var(--ease-out);
-      will-change: transform, opacity;
+      visibility: hidden;
+      transition: opacity .3s var(--ease-out), visibility .3s;
       border: 1px solid var(--line-hover);
       background: var(--surface);
       overflow: hidden;
       box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      contain: layout paint size style;
     }
-    #preview.show { opacity: 1; }
+    #preview.show {
+      opacity: 1;
+      visibility: visible;
+      will-change: transform;
+    }
     #preview img {
       position: absolute;
       inset: 0;
@@ -1891,32 +1887,47 @@
         cache.set(url, img);
       });
 
+      let hoverCount = 0;
+
       function track() {
+        if (hoverCount === 0) {
+          // Snap final + parar (evita rAF rodando para sempre)
+          rafId = null;
+          return;
+        }
         prevX += (mouseX - prevX) * 0.18;
         prevY += (mouseY - prevY) * 0.18;
-        preview.style.transform = `translate(${prevX - 190}px, ${prevY - 120}px)`;
+        preview.style.transform = `translate3d(${prevX - 190}px, ${prevY - 120}px, 0)`;
         rafId = requestAnimationFrame(track);
       }
 
       document.querySelectorAll('.proj-row[data-preview]').forEach(row => {
         row.addEventListener('mouseenter', () => {
+          hoverCount++;
           const url = row.dataset.preview;
           const img = cache.get(url);
           if (activeImg && activeImg !== img) activeImg.classList.remove('active');
-          if (img) {
-            img.classList.add('active');
-            activeImg = img;
-          }
+          if (img) { img.classList.add('active'); activeImg = img; }
           preview.classList.add('show');
-          if (!rafId) { prevX = mouseX; prevY = mouseY; track(); }
+          if (rafId == null) {
+            // Inicializa posição sem teleportar
+            prevX = mouseX; prevY = mouseY;
+            rafId = requestAnimationFrame(track);
+          }
         });
         row.addEventListener('mouseleave', () => {
-          preview.classList.remove('show');
+          hoverCount = Math.max(0, hoverCount - 1);
+          if (hoverCount === 0) preview.classList.remove('show');
         });
       });
 
+      // mousemove com throttling via flag (não dispara rAF, só atualiza coords)
+      let lastMouseMove = 0;
       document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX + 180;  // offset à direita do cursor
+        const now = performance.now();
+        if (now - lastMouseMove < 8) return; // ~120Hz cap
+        lastMouseMove = now;
+        mouseX = e.clientX + 180;
         mouseY = e.clientY;
       }, { passive: true });
     }
