@@ -73,8 +73,8 @@
       transition: background .4s, backdrop-filter .4s;
     }
     nav.bg {
-      background: rgba(11,11,13,.85);
-      backdrop-filter: blur(16px);
+      background: rgba(11,11,13,.88);
+      backdrop-filter: blur(20px);
     }
     .nav-name {
       font-family: var(--ff-display);
@@ -82,6 +82,20 @@
       font-weight: 600;
       letter-spacing: .02em;
     }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .nav-links a {
+      font-family: var(--ff-mono);
+      font-size: .65rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text-1); }
     .nav-right {
       display: flex;
       align-items: center;
@@ -308,7 +322,11 @@
       line-height: 1.35;
       letter-spacing: -.01em;
       color: var(--text-1);
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .6s var(--ease), transform .6s var(--ease);
     }
+    .quote-text.in { opacity: 1; transform: none; }
     .quote-text em {
       font-style: normal;
       color: var(--copper);
@@ -320,7 +338,10 @@
       letter-spacing: .18em;
       text-transform: uppercase;
       color: var(--text-2);
+      opacity: 0;
+      transition: opacity .4s var(--ease) .3s;
     }
+    .quote-attr.in { opacity: 1; }
 
     /* ── PROJECTS ──────────────────────────────────────── */
     #projects {
@@ -361,7 +382,7 @@
       align-items: center;
       padding: 1.75rem 0;
       gap: 2rem;
-      cursor: default;
+      cursor: pointer;
     }
     .proj-top-left {
       display: flex;
@@ -419,7 +440,7 @@
       opacity: 0;
     }
     .proj-row.open .proj-body {
-      max-height: 200px;
+      max-height: 320px;
       opacity: 1;
     }
     .proj-body-inner {
@@ -722,10 +743,18 @@
 
     @media (max-width: 768px) {
       nav { padding: 1.1rem 1.25rem; }
-      .nav-status, .nav-email { display: none; }
+      .nav-links, .nav-status, .nav-email { display: none; }
 
       #hero { min-height: 65svh; padding-top: 0; justify-content: flex-end; }
-      .hero-bg img { object-position: center 10%; }
+      .hero-bg img { object-position: center 10%; filter: contrast(1.06) brightness(.6) saturate(0.8); }
+      .hero-bg::after {
+        background:
+          linear-gradient(to top,
+            rgba(11,11,13,1)   0%,
+            rgba(11,11,13,.85) 35%,
+            rgba(11,11,13,.45) 70%,
+            rgba(11,11,13,.2)  100%);
+      }
       .hero-content { padding: 0 1.5rem 3rem; gap: 1.1rem; width: 100%; margin-left: 0; }
       .hero-scroll { display: none; }
 
@@ -782,13 +811,19 @@
 
   <!-- ── NAV ──────────────────────────────────────────── -->
   <nav id="nav">
-    <span class="nav-name">André Souza</span>
+    <a href="#hero" class="nav-name">André Souza</a>
+    <div class="nav-links" aria-label="Navegação principal">
+      <a href="#projects">Projetos</a>
+      <a href="#about">Sobre</a>
+      <a href="#services">Serviços</a>
+      <a href="#cta">Contato</a>
+    </div>
     <div class="nav-right">
       <span class="nav-status">
         <span class="status-dot"></span>
-        Disponível · 2026
+        Disponível
       </span>
-      <a href="mailto:andresouzzadev@gmail.com" class="nav-email">andresouzzadev@gmail.com</a>
+      <a href="mailto:andresouza@codear.com.br" class="nav-email">andresouza@codear.com.br</a>
     </div>
   </nav>
 
@@ -862,7 +897,7 @@
 
     <div class="projects-list">
 
-      <div class="proj-row" data-proj="0">
+      <div class="proj-row" data-proj="0" tabindex="0" role="button" aria-expanded="false">
         <div class="proj-top">
           <div class="proj-top-left">
             <span class="proj-name">Repify</span>
@@ -887,7 +922,7 @@
         </div>
       </div>
 
-      <div class="proj-row" data-proj="1">
+      <div class="proj-row" data-proj="1" tabindex="0" role="button" aria-expanded="false">
         <div class="proj-top">
           <div class="proj-top-left">
             <span class="proj-name">Codear</span>
@@ -911,7 +946,7 @@
         </div>
       </div>
 
-      <div class="proj-row" data-proj="2">
+      <div class="proj-row" data-proj="2" tabindex="0" role="button" aria-expanded="false">
         <div class="proj-top">
           <div class="proj-top-left">
             <span class="proj-name">Novità Telemedicina</span>
@@ -935,7 +970,7 @@
         </div>
       </div>
 
-      <div class="proj-row" data-proj="3">
+      <div class="proj-row" data-proj="3" tabindex="0" role="button" aria-expanded="false">
         <div class="proj-top">
           <div class="proj-top-left">
             <span class="proj-name">Localiza GF</span>
@@ -972,7 +1007,7 @@
         clareza visual, conversão e a relação entre tecnologia, design e negócio.
       </p>
       <p class="about-text">
-        Baseado em <a href="#">Recife, PE</a>. Disponível para trabalho
+        Baseado em Recife, PE. Disponível para trabalho
         remoto e híbrido. Projetos freelance ou posições em equipe.
       </p>
     </div>
@@ -1079,8 +1114,8 @@
     </h2>
 
     <div class="cta-email-wrap">
-      <a href="mailto:andresouzzadev@gmail.com" class="cta-email">
-        andresouzzadev@gmail.com
+      <a href="mailto:andresouza@codear.com.br" class="cta-email">
+        andresouza@codear.com.br
       </a>
       <button class="copy-btn" id="copy-btn" aria-label="Copiar email">
         Copiar
@@ -1103,12 +1138,6 @@
       </a>
       <a href="https://github.com/andredff" target="_blank" rel="noopener" class="cta-link" aria-label="GitHub">
         GitHub
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-          <path d="M1 9L9 1M9 1H4M9 1V6" stroke="currentColor" stroke-width="1.2"/>
-        </svg>
-      </a>
-      <a href="https://wa.me/5511942407562?text=Ol%C3%A1%20Andr%C3%A9%2C%20vim%20pelo%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener" class="cta-link cta-whatsapp" aria-label="Chamar no WhatsApp">
-        WhatsApp
         <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
           <path d="M1 9L9 1M9 1H4M9 1V6" stroke="currentColor" stroke-width="1.2"/>
         </svg>
@@ -1196,19 +1225,25 @@
       fade(hScroll, 480);
     }
 
-    /* ── PROJECT ROWS — click to expand ─────────────── */
+    /* ── PROJECT ROWS — click/keyboard to expand ────── */
+    function toggleRow(row, e) {
+      if (e && e.target.closest('.proj-arrow')) return;
+      const isOpen = row.classList.contains('open');
+      document.querySelectorAll('.proj-row.open').forEach(r => {
+        r.classList.remove('open');
+        r.setAttribute('aria-expanded', 'false');
+        r.querySelector('.proj-body').setAttribute('aria-hidden', 'true');
+      });
+      if (!isOpen) {
+        row.classList.add('open');
+        row.setAttribute('aria-expanded', 'true');
+        row.querySelector('.proj-body').removeAttribute('aria-hidden');
+      }
+    }
     document.querySelectorAll('.proj-row').forEach(row => {
-      row.querySelector('.proj-top').addEventListener('click', (e) => {
-        if (e.target.closest('.proj-arrow')) return;
-        const isOpen = row.classList.contains('open');
-        document.querySelectorAll('.proj-row.open').forEach(r => {
-          r.classList.remove('open');
-          r.querySelector('.proj-body').setAttribute('aria-hidden','true');
-        });
-        if (!isOpen) {
-          row.classList.add('open');
-          row.querySelector('.proj-body').removeAttribute('aria-hidden');
-        }
+      row.querySelector('.proj-top').addEventListener('click', (e) => toggleRow(row, e));
+      row.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRow(row); }
       });
     });
 
@@ -1224,11 +1259,12 @@
 
     /* ── SCROLL REVEALS ──────────────────────────────── */
     // Quote
-    const qt = document.getElementById('quote-text');
-    qt.style.cssText += 'opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .6s var(--ease)';
+    const qt   = document.getElementById('quote-text');
+    const qat  = document.querySelector('.quote-attr');
     new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
-      qt.style.opacity = '1'; qt.style.transform = 'none';
+      qt.classList.add('in');
+      qat.classList.add('in');
     }, { threshold: 0.25 }).observe(qt);
 
     // About heading
@@ -1262,7 +1298,7 @@
     /* ── COPY EMAIL ──────────────────────────────────── */
     const copyBtn = document.getElementById('copy-btn');
     copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText('andresouzzadev@gmail.com').then(() => {
+      navigator.clipboard.writeText('andresouza@codear.com.br').then(() => {
         copyBtn.textContent = 'Copiado';
         copyBtn.classList.add('copied');
         setTimeout(() => {
